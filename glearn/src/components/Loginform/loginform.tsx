@@ -1,26 +1,33 @@
+// pages/LoginPage.tsx
 import React, { useState } from "react";
 import { Card, CardContent } from "../ui/FallbackUI";
-import { Button } from "../ui/FallbackUI";
-import { Input } from "../ui/FallbackUI";
+import { Button, Input } from "../ui/FallbackUI";
+import { Link, useNavigate } from "react-router-dom";
 
-const App = () => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+const Loginform = () => {
+  const [isLogin, setIsLogin] = useState(true); // Toggle between login and signup
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // Mobile menu state
+  const navigate = useNavigate();
+
+  const handleAuthSuccess = () => {
+    navigate("/home"); // Redirect to home after successful login/signup
+  };
 
   return (
     <div className="bg-[#E6E6EF] min-h-screen flex flex-col">
-      {/* Responsive Header */}
+      {/* Header */}
       <header className="bg-white shadow-md py-4 px-6 flex items-center justify-between relative">
-        <div className="flex items-center">
-          <div className="text-xl font-bold text-indigo-700">G-LEARN</div>
-        </div>
+        <Link to="/" className="text-xl font-bold text-indigo-700">G-LEARN</Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex space-x-6">
-          <a href="#" className="text-gray-600 hover:text-indigo-600">Home</a>
-          <a href="#" className="text-gray-600 hover:text-indigo-600">Library Catalog</a>
-          <a href="#" className="text-gray-600 hover:text-indigo-600">About Us</a>
-          <a href="#" className="text-gray-600 hover:text-indigo-600">Help/FAQs</a>
+          <Link to="/home" className="text-gray-600 hover:text-indigo-600">Home</Link>
+          <Link to="/login" className="text-gray-600 hover:text-indigo-600">Log in</Link>
+          <Link to="/login" className="text-gray-600 hover:text-indigo-600">Sign up</Link>
+          <Link to="/library" className="text-gray-600 hover:text-indigo-600">Library Catalog</Link>
+          <Link to="/about" className="text-gray-600 hover:text-indigo-600">About Us</Link>
+          <Link to="/help" className="text-gray-600 hover:text-indigo-600">Help/FAQs</Link>
         </nav>
 
         {/* Mobile Menu Button */}
@@ -48,10 +55,12 @@ const App = () => {
         {isMenuOpen && (
           <div className="absolute md:hidden top-full left-0 right-0 bg-white shadow-lg py-2 px-4 z-50">
             <nav className="flex flex-col space-y-3">
-              <a href="#" className="text-gray-600 hover:text-indigo-600 py-2">Home</a>
-              <a href="#" className="text-gray-600 hover:text-indigo-600 py-2">Library Catalog</a>
-              <a href="#" className="text-gray-600 hover:text-indigo-600 py-2">About Us</a>
-              <a href="#" className="text-gray-600 hover:text-indigo-600 py-2">Help/FAQs</a>
+              <Link to="/home" className="text-gray-600 hover:text-indigo-600 py-2">Home</Link>
+              <Link to="/login" className="text-gray-600 hover:text-indigo-600 py-2">Log in</Link>
+              <Link to="/login" className="text-gray-600 hover:text-indigo-600 py-2">Sign up</Link>
+              <Link to="/library" className="text-gray-600 hover:text-indigo-600 py-2">Library Catalog</Link>
+              <Link to="/about" className="text-gray-600 hover:text-indigo-600 py-2">About Us</Link>
+              <Link to="/help" className="text-gray-600 hover:text-indigo-600 py-2">Help/FAQs</Link>
             </nav>
           </div>
         )}
@@ -113,9 +122,9 @@ const App = () => {
 
             {/* Form Content */}
             {isLogin ? (
-              <LoginForm />
+              <LoginForm onSuccess={handleAuthSuccess} />
             ) : (
-              <SignupForm />
+              <SignupForm onSuccess={handleAuthSuccess} />
             )}
           </CardContent>
         </Card>
@@ -125,76 +134,94 @@ const App = () => {
 };
 
 // Extracted Login Form Component
-const LoginForm = () => (
-  <form>
-    <Input type="email" placeholder="Email" className="mb-4" />
-    <Input type="password" placeholder="Password" className="mb-4" />
+const LoginForm = ({ onSuccess }: { onSuccess: () => void }) => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Add your login logic here
+    console.log("Login form submitted");
+    onSuccess(); // Redirect after successful login
+  };
 
-    <div className="flex items-center justify-between mb-4">
-      <label className="flex items-center space-x-2">
-        <input type="checkbox" className="form-checkbox" />
-        <span>Remember me?</span>
-      </label>
-      <a href="#" className="text-indigo-600 hover:underline">
-        Forgot password?
-      </a>
-    </div>
+  return (
+    <form onSubmit={handleSubmit}>
+      <Input type="email" placeholder="Email" className="mb-4" />
+      <Input type="password" placeholder="Password" className="mb-4" />
 
-    <Button className="w-full bg-indigo-600 text-white hover:bg-indigo-700 py-2 rounded-md">
-      Login
-    </Button>
+      <div className="flex items-center justify-between mb-4">
+        <label className="flex items-center space-x-2">
+          <input type="checkbox" className="form-checkbox" />
+          <span>Remember me?</span>
+        </label>
+        <a href="#" className="text-indigo-600 hover:underline">
+          Forgot password?
+        </a>
+      </div>
 
-    <div className="mt-4">
-      <Button variant="btn">
-        Login with Google
+      <Button type="submit" className="w-full bg-indigo-600 text-white hover:bg-indigo-700 py-2 rounded-md">
+        Login
       </Button>
-    </div>
-  </form>
-);
+
+      <div className="mt-4">
+        <Button variant="btn">
+          Login with Google
+        </Button>
+      </div>
+    </form>
+  );
+};
 
 // Extracted Signup Form Component
-const SignupForm = () => (
-  <form>
-    <div className="grid grid-cols-2 gap-4">
-      <Input type="text" placeholder="First Name" className="mb-4" />
-      <Input type="text" placeholder="Last Name" className="mb-4" />
-    </div>
+const SignupForm = ({ onSuccess }: { onSuccess: () => void }) => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Add your signup logic here
+    console.log("Signup form submitted");
+    onSuccess(); // Redirect after successful signup
+  };
 
-    <Input type="text" placeholder="Class" className="mb-4" />
-
-    <div className="grid grid-cols-2 gap-4">
-      <Input type="text" placeholder="State" className="mb-4" />
-      <Input type="date" placeholder="Date of Birth" className="mb-4" />
-    </div>
-
-    <div className="mb-4">
-      <p className="text-gray-700 mb-2">Gender</p>
-      <div className="flex space-x-4">
-        <label className="flex items-center space-x-2">
-          <input type="radio" name="gender" value="male" className="form-radio" />
-          <span>Male</span>
-        </label>
-        <label className="flex items-center space-x-2">
-          <input type="radio" name="gender" value="female" className="form-radio" />
-          <span>Female</span>
-        </label>
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="grid grid-cols-2 gap-4">
+        <Input type="text" placeholder="First Name" className="mb-4" />
+        <Input type="text" placeholder="Last Name" className="mb-4" />
       </div>
-    </div>
 
-    <Input type="email" placeholder="Email" className="mb-4" />
-    <Input type="password" placeholder="Password" className="mb-2" />
-    <PasswordRequirements />
-    <Input type="password" placeholder="Confirm Password" className="mb-4" />
+      <Input type="text" placeholder="Class" className="mb-4" />
 
-    <Button className="w-full bg-indigo-600 text-white hover:bg-indigo-700 py-2 rounded-md mb-4">
-      Submit
-    </Button>
+      <div className="grid grid-cols-2 gap-4">
+        <Input type="text" placeholder="State" className="mb-4" />
+        <Input type="date" placeholder="Date of Birth" className="mb-4" />
+      </div>
 
-    <Button variant="btn">
-      Sign Up with Google
-    </Button>
-  </form>
-);
+      <div className="mb-4">
+        <p className="text-gray-700 mb-2">Gender</p>
+        <div className="flex space-x-4">
+          <label className="flex items-center space-x-2">
+            <input type="radio" name="gender" value="male" className="form-radio" />
+            <span>Male</span>
+          </label>
+          <label className="flex items-center space-x-2">
+            <input type="radio" name="gender" value="female" className="form-radio" />
+            <span>Female</span>
+          </label>
+        </div>
+      </div>
+
+      <Input type="email" placeholder="Email" className="mb-4" />
+      <Input type="password" placeholder="Password" className="mb-2" />
+      <PasswordRequirements />
+      <Input type="password" placeholder="Confirm Password" className="mb-4" />
+
+      <Button type="submit" className="w-full bg-indigo-600 text-white hover:bg-indigo-700 py-2 rounded-md mb-4">
+        Submit
+      </Button>
+
+      <Button variant="btn">
+        Sign Up with Google
+      </Button>
+    </form>
+  );
+};
 
 // Extracted Password Requirements Component
 const PasswordRequirements = () => (
@@ -208,4 +235,4 @@ const PasswordRequirements = () => (
   </>
 );
 
-export default App;
+export default Loginform;
